@@ -16,36 +16,45 @@
  */
 class Format extends Plugin {
 
+    public function __call($name, $args) {
+        if ($name == 'format') {
+            return $this->doformat();
+        }
+
+        return null;
+    }
+
+
 	/**
 	 * Markdown the content
 	 */
-	public function format()
+	public function doformat()
 	{
 		$this->CI = get_instance();
 
 		$this->CI->load->helper('url');
 
 		$method = $this->get_param('method', 'markdown');
-		
+
 		// Prep our content
 		$content = trim($this->tag_content);
-		
+
 		switch($method):
-		
+
 			// Textile
 			case 'textile':
 				$this->CI->load->library('Textile');
 				$html = $this->CI->textile->TextileThis($content);
 				return $this->html_dom($html);
 				break;
-		
+
 			// Default is markdown
 			default:
 				require_once('markdown.php');
 				$html = Markdown($content);
 				return $this->html_dom($html);
 				break;
-		
+
 		endswitch;
 	}
 
@@ -53,16 +62,16 @@ class Format extends Plugin {
 	private function html_dom($html) {
 
 		require_once('simple_html_dom.php');
-		
+
 		$html_dom = str_get_html($html, false, false, DEFAULT_TARGET_CHARSET, false);
-		
+
 		// Get elements. Similar to using jQuery selectors
 		$headings = $html_dom->find('h1,h2,h3,h4,h5,h6');
-		
+
 		$h_innertexts = array();
 
 		foreach ($headings as $key => $h) {
-		
+
 			// Generate an array of heading inner texts
 			$h_innertexts[] = $h->innertext;
 
@@ -73,7 +82,7 @@ class Format extends Plugin {
 			$make_unique = count($instances) > 1 ? '-'.count($instances) : '';
 
 			$slug = anchor_format($h->plaintext.$make_unique, 'dash', true);
-			
+
 			// Add the slug to id to keep compatibility with docs plugin {{ docs:id_link title="Example" }}
 			$h->id = $slug;
 
@@ -82,12 +91,12 @@ class Format extends Plugin {
 
 			// Set the anchor link for all headings after the first
 			$link_anchor = $key > 0 ? '<a name="'.$slug.'" class="anchor hidden" href="'.current_url().'#'.$slug.'"></a>' : '';
-			
+
 			// Add everything together and overwrite the innertext property
 			$h->innertext = $link_anchor.$h->innertext.$link_top;
-		
+
 		}
-		
+
 		// Returns the newly formatted html
 		return $html_dom->save();
 	}

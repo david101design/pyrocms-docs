@@ -13,12 +13,20 @@
  */
 class Link extends Plugin {
 
+    public function __call($name, $args) {
+        if ($name == 'link') {
+            return $this->makelink();
+        }
+
+        return null;
+    }
+
 	/**
 	 * Simple anchor link
 	 */
-	public function link()
+	public function makelink()
 	{
 		return '<a href="'.site_url($this->get_param('uri')).'">'.$this->get_param('title').'</a>';
-	}	
+	}
 
 }
