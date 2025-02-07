@@ -28,10 +28,11 @@
  */
 class CI_URI {
 
-	var	$keyval			= array();
-	var $uri_string;
-	var $segments		= array();
-	var $rsegments		= array();
+	public $keyval			= array();
+	public $uri_string;
+	public $segments		= array();
+	public $rsegments		= array();
+	public $config;
 
 	/**
 	 * Constructor
@@ -120,7 +121,7 @@ class CI_URI {
 		$path = (isset($_SERVER[$uri])) ? $_SERVER[$uri] : @getenv($uri);
 		$this->_set_uri_string($path);
 	}
-	
+
 	// --------------------------------------------------------------------
 
 	/**
@@ -133,7 +134,7 @@ class CI_URI {
 	{
 		// Filter out control characters
 		$str = remove_invisible_characters($str, FALSE);
-		
+
 		// If the URI contains only a slash we'll kill it
 		$this->uri_string = ($str == '/') ? '' : $str;
 	}
@@ -184,12 +185,12 @@ class CI_URI {
 			$_SERVER['QUERY_STRING'] = '';
 			$_GET = array();
 		}
-		
+
 		if ($uri == '/' || empty($uri))
 		{
 			return '/';
 		}
-				
+
 		$uri = parse_url($uri, PHP_URL_PATH);
 
 		// Do some final cleaning of the URI and return it

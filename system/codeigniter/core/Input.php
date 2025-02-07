@@ -28,12 +28,14 @@
  */
 class CI_Input {
 
-	var $ip_address				= FALSE;
-	var $user_agent				= FALSE;
-	var $_allow_get_array		= TRUE;
-	var $_standardize_newlines	= TRUE;
-	var $_enable_xss			= FALSE; // Set automatically based on config setting
-	var $_enable_csrf			= FALSE; // Set automatically based on config setting
+	public $ip_address				= FALSE;
+	public $user_agent				= FALSE;
+	public $_allow_get_array		= TRUE;
+	public $_standardize_newlines	= TRUE;
+	public $_enable_xss			= FALSE; // Set automatically based on config setting
+	public $_enable_csrf			= FALSE; // Set automatically based on config setting
+	public $security;
+	public $uni;
 
 	protected $headers			= array();
 

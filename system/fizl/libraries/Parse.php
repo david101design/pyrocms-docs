@@ -3,7 +3,7 @@
 /**
  * Parse Library
  *
- * Class for plugins to extend. 
+ * Class for plugins to extend.
  *
  * @package		Fizl
  * @author		Adam Fairholm (@adamfairholm)
@@ -12,6 +12,7 @@
  * @link		http://parse19.com/fizl
  */
 class Parse {
+    private $CI;
 
 	/**
 	 * Parse Content
@@ -37,39 +38,39 @@ class Parse {
 		else
 		{
 			$pieces = explode(':', $name, 2);
-			
+
 			if (count($pieces) != 2) return NULL;
-			
+
 			$plugin 	= $pieces[0];
 			$call		= $pieces[1];
 		}
-		
+
 		// Look for the plugin file
 		if (is_dir(APPPATH.'plugins/'.$plugin))
 		{
 			$this->CI->load->add_package_path(APPPATH.'plugins/'.$plugin);
-		}	
+		}
 		elseif (is_dir(FCPATH.'addons/plugins/'.$plugin))
 		{
 			$this->CI->load->add_package_path(FCPATH.'fizl/plugins/'.$plugin);
-		}	
+		}
 		else
 		{
 			return NULL;
 		}
-		
+
 		$this->CI->load->library($plugin);
-		
+
 		// Add our params to the library
 		// as class variables
 		foreach($attributes as $key => $val)
 		{
 			$this->CI->$plugin->attributes[$key] = $val;
 		}
-		
+
 		// Add content to the library
 		$this->CI->$plugin->tag_content = $content;
-		
+
 		return $this->CI->$plugin->$call();
 	}
 

@@ -14,6 +14,27 @@
 class Fizl extends CI_Controller {
 
 	public $vars = array();
+	public $benchmark;
+	public $hooks;
+	public $config;
+	public $utf8;
+	public $uri;
+	public $router;
+	public $output;
+	public $security;
+	public $input;
+	public $lang;
+	public $load;
+	public $plugin;
+	public $parse;
+	public $variables;
+	public $embed;
+	public $asset;
+	public $breadcrumbs;
+	public $link;
+	public $format;
+	public $nav;
+	public $docs;
 
 	/**
 	 * Main Fizl Function
@@ -51,10 +72,10 @@ class Fizl extends CI_Controller {
 
 		$this->load->library('Plugin');
 		$this->load->library('Parse');
-		
+
 		include(APPPATH.'libraries/Lex/Autoloader.php');
 		Lex_Autoloader::register();
-		
+
 		$this->load->helper(array('file', 'url'));
 
 		// -------------------------------------
@@ -63,7 +84,7 @@ class Fizl extends CI_Controller {
 		// We do this first since we need this
 		// data
 		// -------------------------------------
-		
+
 		$this->vars = array(
 			'segment_1'		=> $this->uri->segment(1),
 			'segment_2'		=> $this->uri->segment(2),
@@ -80,30 +101,30 @@ class Fizl extends CI_Controller {
 
 		// Get them configs
 		$raw_configs = require_once(FCPATH.'config.php');
-		
+
 		foreach($config as $key => $var)
 		{
 			$this->vars[$key] = $var;
 		}
-		
+
 		// Set the site folder as a constant
 		define('SITE_FOLDER', $this->vars['site_folder']);
 
 		// -------------------------------------
 		// Look for page
 		// -------------------------------------
-	
+
 		// So... does this file exist?
 		$segments = $this->uri->segment_array();
-		
+
 		$is_home = FALSE;
-		
+
 		// Blank mean it's the home page, ya hurd?
 		if (empty($segments))
 		{
 			$is_home = TRUE;
 			$segments = array('index');
-		}	
+		}
 
 		// -------------------------------------
 		// Find filename
@@ -120,21 +141,21 @@ class Fizl extends CI_Controller {
 			// Okay let's take a look at the last element
 			$file = array_pop($segments);
 		}
-		
+
 		// Turn the URL into a file path
 		$file_path = SITE_FOLDER;
 		if ($segments) $file_path .= '/'.implode('/', $segments);
-								
+
 		// -------------------------------------
 		// Find file
 		// -------------------------------------
 
 		// We just want two things
 		$file_elems = array_slice(explode('.', $file), 0, 2);
-				
+
 		$supported_files = array('html', 'md', 'textile');
 		$file_ext = NULL;
-		
+
 		// If there is a file extenison,
 		// we just add it here.
 		if(count($file_elems) == 2)
@@ -156,27 +177,27 @@ class Fizl extends CI_Controller {
 				}
 			}
 		}
-								
+
 		// -------------------------------------
 		// Set headers
 		// -------------------------------------
-				
+
 		if ( ! $file_ext)
 		{
 			// No file for this? Set us a 404
 			header('HTTP/1.0 404 Not Found');
-						
+
 			$is_404 = true;
-		}	
+		}
 		else
 		{
 			$is_404 = false;
 
 			$this->output->set_content_type('text/html');
 		}
-		
+
 		// -------------------------------------
-		// Set Template	
+		// Set Template
 		// -------------------------------------
 
 		$template = FALSE;
@@ -184,38 +205,38 @@ class Fizl extends CI_Controller {
 		$template_path = FCPATH.$this->vars['assets_folder'].'/templates/';
 
 		if($is_home and is_file($template_path.'home.html')):
-				
+
 			$template = read_file($template_path.'home.html');
-			
+
 		elseif($is_404):
-		
+
 			$template = read_file($template_path.'404.html');
-			
+
 		// Do we have a template for this folder?
 		elseif(is_file($template_path.implode('_', $segments).'.html')):
-		
+
 			$template = read_file($template_path.implode('_', $segments).'.html');
-			
+
 		elseif(is_file($template_path.'sub.html')):
-		
+
 			$template = read_file($template_path.'sub.html');
-		
+
 		elseif(is_file($template_path.'default.html')):
-		
+
 			$template = read_file($template_path.'default.html');
-		
+
 		endif;
-		
+
 		// -------------------------------------
-		// Get Content	
+		// Get Content
 		// -------------------------------------
-		
+
 		if ( ! $is_404):
-			
+
 			$content = read_file($file_path);
-			
+
 			// -------------------------------------
-			// Prep content by filetype	
+			// Prep content by filetype
 			// -------------------------------------
 			// .md and .textile get formatted
 			// automatically.
@@ -231,7 +252,7 @@ class Fizl extends CI_Controller {
 			}
 
 			// -------------------------------------
-	
+
 			// If we have no template, then
 			// we just use the content.
 			if ( ! $template)
@@ -245,24 +266,24 @@ class Fizl extends CI_Controller {
 				// variable manually.
 				$template = str_replace(array('{{ content }}', '{{content}}'), $content, $template);
 			}
-			
+
 			// Our content is avialble
 			$this->vars['content'] = $content;
-		
+
 		endif;
-						
+
 		// -------------------------------------
-		// Prep and Output Content	
+		// Prep and Output Content
 		// -------------------------------------
-		
+
 		$parser = new Lex_Parser();
 		$parser->scope_glue(':');
-		
+
 		echo $parser->parse($template, $this->vars, array($this->parse, 'callback'), TRUE);
 	}
-	
+
 	// --------------------------------------------------------------------------
-	
+
 	/**
 	 * Parse Template Embeds
 	 *
@@ -275,14 +296,14 @@ class Fizl extends CI_Controller {
 	{
 		// Load the file. Always an .html
 		$embed_content = read_file(FCPATH.$this->vars['assets_folder'].'/embeds/'.$file.'.html');
-		
+
 		if ( ! $embed_content) return NULL;
-		
+
 		if ( ! empty($attributes)) return $embed_content;
-	
+
 		$parser = new Lex_Parser();
 		$parser->scope_glue(':');
-		
+
 		$parser->parse_variables($embed_content, $attributes);
 	}
 

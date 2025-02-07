@@ -28,13 +28,14 @@
  */
 class CI_Router {
 
-	var $config;
-	var $routes			= array();
-	var $error_routes	= array();
-	var $class			= '';
-	var $method			= 'index';
-	var $directory		= '';
-	var $default_controller;
+	public $config;
+	public $routes			= array();
+	public $error_routes	= array();
+	public $class			= '';
+	public $method			= 'index';
+	public $directory		= '';
+	public $default_controller;
+	public $uri;
 
 	/**
 	 * Constructor
@@ -95,7 +96,7 @@ class CI_Router {
 		{
 			include(APPPATH.'config/routes'.EXT);
 		}
-		
+
 		$this->routes = ( ! isset($route) OR ! is_array($route)) ? array() : $route;
 		unset($route);
 

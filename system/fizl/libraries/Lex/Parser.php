@@ -25,6 +25,9 @@ class Lex_Parser
 
 	protected $callback_tag_regex = '';
 	protected $callback_loop_tag_regex = '';
+	protected $callback_name_regex = '';
+	protected $callback_block_regex = '';
+	protected $recursive_regex = '';
 
 	protected $noparse_regex = '';
 

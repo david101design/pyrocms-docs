@@ -1457,6 +1457,8 @@ class simple_html_dom
 		'tr' => array('td' => 1, 'th' => 1, 'tr' => 1),
 	);
 
+	protected $optional_closing_array;
+
 	function __construct(
 		$str = null,
 		$lowercase = true,

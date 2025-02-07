@@ -29,7 +29,7 @@
  */
 class CI_Benchmark {
 
-	var $marker = array();
+	public $marker = array();
 
 	// --------------------------------------------------------------------
 

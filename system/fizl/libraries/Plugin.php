@@ -3,7 +3,7 @@
 /**
  * Fizl Parse Library
  *
- * Class for plugins to extend. 
+ * Class for plugins to extend.
  *
  * @package		Fizl
  * @author		Adam Fairholm (@adamfairholm)
@@ -12,6 +12,7 @@
  * @link		http://parse19.com/fizl
  */
 class Plugin {
+    public $CI;
 
 	/**
 	 * Whatever is between the tags for tag pairs
@@ -32,14 +33,14 @@ class Plugin {
 	public $attributes;
 
 	// --------------------------------------------------------------------------
-	
+
 	public function __construct()
 	{
 		$this->CI = get_instance();
 	}
 
 	// --------------------------------------------------------------------------
-	
+
 	/**
 	 * Get a plugin param.
 	 *
@@ -53,7 +54,7 @@ class Plugin {
 		if(isset($this->attributes[$key]))
 		{
 			return $this->attributes[$key];
-		}	
+		}
 		else
 		{
 			return $default;
